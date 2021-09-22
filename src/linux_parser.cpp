@@ -5,8 +5,11 @@
 #include <vector>
 
 #include "linux_parser.h"
+#include "format.h"
+#include "system.h"
 
 using std::stof;
+using std::stol;
 using std::string;
 using std::to_string;
 using std::vector;
@@ -67,11 +70,40 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 
-// TODO: Read and return the system memory utilization
-float LinuxParser::MemoryUtilization() { return 0.0; }
+// DONE-CK: Read and return the system memory utilization
+float LinuxParser::MemoryUtilization() { 
+  string line;
+  string memtype, memamt, kb;
+  float mems[2];
+  std::ifstream stream(kProcDirectory + kMeminfoFilename);
 
-// TODO: Read and return the system uptime
-long LinuxParser::UpTime() { return 0; }
+  for (int i = 0; i < 2; i++) {
+    if (stream.is_open()) {
+      std::getline(stream, line);
+      std::istringstream linestream(line);
+      linestream >> memtype >> memamt >> kb;
+    }
+  mems[i] = stol(memamt); // need a float or long?
+  }
+  return (float)(mems[0] - mems[1]) / (float)mems[0]; 
+}
+
+// DONE-CK: Read and return the system uptime
+long LinuxParser::UpTime() { 
+  // get the uptime from 
+  string up_time, idle_time;
+  string line;
+  std::ifstream stream(kProcDirectory + kUptimeFilename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    linestream >> up_time >> idle_time;
+    return stol(up_time); 
+  } else { 
+    // didn't read file
+    return 0;
+  }
+}
 
 // TODO: Read and return the number of jiffies for the system
 long LinuxParser::Jiffies() { return 0; }
@@ -87,7 +119,23 @@ long LinuxParser::ActiveJiffies() { return 0; }
 long LinuxParser::IdleJiffies() { return 0; }
 
 // TODO: Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() { return {}; }
+vector<string> LinuxParser::CpuUtilization() { 
+  string dummy;
+  string line;
+  vector<string> cpu_use_vec(10);
+  std::ifstream stream(kProcDirectory + kStatFilename);
+
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    linestream >> dummy;
+
+    for (int i = 0; i < 10; i++) {
+      linestream >> cpu_use_vec[i];
+    }
+  }
+  return cpu_use_vec; 
+}
 
 // TODO: Read and return the total number of processes
 int LinuxParser::TotalProcesses() { return 0; }
