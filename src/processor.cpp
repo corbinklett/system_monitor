@@ -12,6 +12,8 @@ using std::unordered_map;
 
 // TODO: Return the aggregate CPU utilization
 float Processor::Utilization() { 
+    using LinuxParser::CPUStates;
+
     // get value from LinuxParser
     vector<string> cpuvec = LinuxParser::CpuUtilization();
 
@@ -20,36 +22,33 @@ float Processor::Utilization() {
     // https://stackoverflow.com/questions/23367857/accurate-calculation-of-cpu-usage-given-in-percentage-in-linux
    
     // loop over LinuxParser::CPUStates
-    unordered_map <LinuxParser::CPUStates, float> cpu_states;
+    unordered_map <LinuxParser::CPUStates, float> states;
     int i = 0;
     for (LinuxParser::CPUStates s = LinuxParser::CPUStates::kUser_; s = LinuxParser::CPUStates::kGuestNice_; s++ ) {
-        cpu_states[s] = stof(cpuvec[i]);
+        states[s] = stof(cpuvec[i]);
         i++;
     }
 
     // compute the cpu state
-      kUser,  kNice_, kSystem_, kIdle_, kIOwait_, kIRQ_, kSoftIRQ_, kSteal_, kGuest_,kGuestNice_
+    // kUser,  kNice_, kSystem_, kIdle_, kIOwait_, kIRQ_, kSoftIRQ_, kSteal_, kGuest_,kGuestNice_
 
-    revIdle = previdle + previowait
-    Idle = idle + iowait
+    float prevIdle = idle_ + prev_iowait_;
+    idle_ = states[kIdle]
+    float Idle = states[kIdle] + states[kIOwait];
 
     PrevNonIdle = prevuser + prevnice + prevsystem + previrq + prevsoftirq + prevsteal
-    NonIdle = user + nice + system + irq + softirq + steal
+    float NonIdle = states[kUser] + states[kNice] + states[kSystem] + states[kIRQ] + states[kSoftIRQ] + states[kSteal];
 
     PrevTotal = PrevIdle + PrevNonIdle
-    Total = Idle + NonIdle
+    float Total = Idle + NonIdle;
 
     # differentiate: actual value minus the previous one
     totald = Total - PrevTotal
     idled = Idle - PrevIdle
 
-    CPU_Percentage = (totald - idled)/totald
+    //CPU_Percentage = 
+    return (totald - idled)/totald;
 
-
-    string cpu_string = cpu_use_vec[0];
-
-    float prev_used = used_;
-    used_ = stof(cpu_string);
     } else {
         return 0.0;
     }
