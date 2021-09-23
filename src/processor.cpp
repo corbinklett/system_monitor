@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 #include "processor.h"
 #include "linux_parser.h"
@@ -7,6 +8,7 @@
 using std::vector;
 using std::string;
 using std::stof;
+using std::unordered_map;
 
 // TODO: Return the aggregate CPU utilization
 float Processor::Utilization() { 
@@ -18,17 +20,15 @@ float Processor::Utilization() {
     // https://stackoverflow.com/questions/23367857/accurate-calculation-of-cpu-usage-given-in-percentage-in-linux
    
     // loop over LinuxParser::CPUStates
-    float user = stof(cpuvec[0]);
-    float nice = stof(cpuvec[1]);
-    float system = stof(cpuvec[2]);
-    float idle = stof(cpuvec[3]);
-    float iowait = stof(cpuvec[4]);
-    float irq = stof(cpuvec[5]);
-    float softirq = stof(cpuvec[6]);
-    float iowait = stof(cpuvec[7]);
-    float irq = stof(cpuvec[7]);
-    float softirq = stof(cpuvec[9]);
+    unordered_map <LinuxParser::CPUStates, float> cpu_states;
+    int i = 0;
+    for (LinuxParser::CPUStates s = LinuxParser::CPUStates::kUser_; s = LinuxParser::CPUStates::kGuestNice_; s++ ) {
+        cpu_states[s] = stof(cpuvec[i]);
+        i++;
+    }
 
+    // compute the cpu state
+      kUser,  kNice_, kSystem_, kIdle_, kIOwait_, kIRQ_, kSoftIRQ_, kSteal_, kGuest_,kGuestNice_
 
     revIdle = previdle + previowait
     Idle = idle + iowait
