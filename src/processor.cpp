@@ -30,15 +30,6 @@ float Processor::Utilization() {
         states[state] = stof(cpuvec[i]);
     }
 
-    // int i = CPUStates::kUser_;
-    // state = static_cast<CPUStates>(i);
-    // states[state] = stof(cpuvec[i]);
-
-    // i = 1;
-    // state = static_cast<CPUStates>(i);
-    // states[state] = stof(cpuvec[i]);
-
-
     // compute the cpu state
 
     float prev_idle = idle_; 
