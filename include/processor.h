@@ -7,11 +7,9 @@ class Processor {
   
   // TODO: Declare any necessary private members
  private:
- // make some sort of variable that keeps record of the previous CPU utilization 
- // so that the current cpu utilization can be closely estimated
- float idle_;
- float nonidle_;
- float total_;
+ float idle_{1.0};
+ float non_idle_{1.0};
+ float total_{100.0};
 
 };
 
