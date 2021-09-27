@@ -17,22 +17,17 @@ using std::vector;
 // DONE-CK: Return the system's CPU
 Processor& System::Cpu() { return cpu_; }
 
-// TODO: Return a container composed of the system's processes
+// DONE-MAYBE-CK: Return a container composed of the system's processes
 vector<Process>& System::Processes() { 
-    std::vector<Process> & processes_;
+    // maybe this can both assign values to processes_ and return it
     // get PIDs from LinuxParser
     std::vector<int> processes = LinuxParser::Pids();
-
-    // make vector of Process objects. How?
-    // iterate
-    for (pids in processes) {
-        Process process(PID);
-        // set the attributes
-        
-
+    processes_ = {}; // could maybe replace processes that have changed, but that sounds cumbersome
+    // but can the same process ID be re-used later on? yes it can.
+    for (int pid : processes) {
+        Process process(pid);
+        processes_.push_back(process);
     }
-
-    // return the REFERENCE
     return processes_; 
 }
 
@@ -51,11 +46,15 @@ std::string System::OperatingSystem() {
     return LinuxParser::OperatingSystem();
 }
 
-// TODO: Return the number of processes actively running on the system
-int System::RunningProcesses() { return 0; }
+// DONE-CK: Return the number of processes actively running on the system
+int System::RunningProcesses() { 
+    return LinuxParser::RunningProcesses();
+ }
 
-// TODO: Return the total number of processes on the system
-int System::TotalProcesses() { return 0; }
+// DONE-CK: Return the total number of processes on the system
+int System::TotalProcesses() { 
+    return LinuxParser::TotalProcesses();
+}
 
 // DONE-CK: Return the number of seconds since the system started running
 long System::UpTime() { 

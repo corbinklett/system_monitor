@@ -11,7 +11,7 @@ using std::string;
 using std::stof;
 using std::unordered_map;
 
-// TODO: Return the aggregate CPU utilization
+// DONE-CK: Return the aggregate CPU utilization
 float Processor::Utilization() { 
     using namespace LinuxParser;
 
