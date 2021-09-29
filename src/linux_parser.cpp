@@ -215,11 +215,12 @@ string LinuxParser::Uid(int pid) {
 
 // DONE-CK: Read and return the user associated with a process
 string LinuxParser::User(int pid) { 
-  string uid = Uid(pid);
+  string uid = LinuxParser::Uid(pid);
+  //return uid;
   string line, dummy, user, uid_guess;
   std::ifstream stream(kPasswordPath);
 
-    while ( stream.is_open() ) {
+    while ( stream.good() ) {
       std::getline(stream, line, ':');
       std::istringstream linestream(line);
       linestream >> user >> dummy >> uid_guess;
