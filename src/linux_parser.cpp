@@ -175,7 +175,7 @@ int LinuxParser::RunningProcesses() {
   return 0;
  }
 
-// TODO: Read and return the command associated with a process
+// DONE-CK: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Command(int pid) { 
   string line;
@@ -190,7 +190,8 @@ string LinuxParser::Command(int pid) {
 
 // TODO: Read and return the memory used by a process
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Ram(int pid[[maybe_unused]]) { 
+string LinuxParser::Ram(int pid_) { 
+  
   return string(); 
 }
 
@@ -246,4 +247,31 @@ long LinuxParser::UpTime(int pid) {
         }
   }
   return 0.0;
+}
+
+// ADDED-CK: Read and return cpu utilization of a process
+
+vector<string> LinuxParser::CpuUtilization(int pid) { 
+  int n = 5;
+  int indices[n] = {13,14,15,16,21};
+  string line, dummy;
+  vector<string> cpu_use_vec(5);
+  std::ifstream stream(kProcDirectory + to_string(pid) + kStatFilename);
+
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    
+    int count = 0;
+
+    for (int i = 0; i <= indices[n-1]; i++) {
+      if (i == indices[count]) {
+        linestream >> cpu_use_vec[i];
+        count++;
+      } else {
+        linestream >> dummy;
+      }
+    }
+  }
+  return cpu_use_vec; 
 }

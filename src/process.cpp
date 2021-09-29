@@ -10,13 +10,26 @@
 using std::string;
 using std::to_string;
 using std::vector;
+using std::stof;
 
 // DONE-CK: Return this process's ID
 int Process::Pid() { return pid_; }
 
-// TODO: Return this process's CPU utilization
+// DONE-CK: Return this process's CPU utilization
 float Process::CpuUtilization() { 
-    return 0.0; // LinuxParser::CpuUtilization(pid_);
+    vector<string> cpu_use_vec = LinuxParser::CpuUtilization(pid_);
+
+    // algorithm from https://stackoverflow.com/questions/16726779/how-do-i-get-the-total-cpu-usage-of-an-application-from-proc-pid-stat/16736599#16736599
+    float utime = stof(cpu_use_vec[0]);
+    float stime = stof(cpu_use_vec[1]);
+    float cutime = stof(cpu_use_vec[2]);
+    float cstime = stof(cpu_use_vec[3]);
+    float starttime = stof(cpu_use_vec[4]);
+
+    float total_time = utime + stime + cutime + cstime;
+    float seconds = uptime_ - (starttime / sysconf(_SC_CLK_TCK));
+    cpu_use_ = ((total_time / sysconf(_SC_CLK_TCK)) / seconds);
+    return cpu_use_;
 }
 
 // TODO: Return the command that generated this process
@@ -34,9 +47,16 @@ string Process::User() {
 
 // DONE-CK: Return the age of this process (in seconds)
 long int Process::UpTime() { 
-    return LinuxParser::UpTime(pid_);
+    uptime_ = LinuxParser::UpTime(pid_);
+    return uptime_;
+}
+
+float Process::getCpuUse() const {
+    return cpu_use_;
 }
 
 // TODO: Overload the "less than" comparison operator for Process objects
 // REMOVE: [[maybe_unused]] once you define the function
-bool Process::operator<(Process const& a[[maybe_unused]]) const { return true; }
+bool Process::operator<(Process const& a) const { 
+    return cpu_use_ < a.getCpuUse();
+}
