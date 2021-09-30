@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <cstdlib>
 
 #include "process.h"
 #include "linux_parser.h"
@@ -27,14 +28,20 @@ float Process::CpuUtilization() {
     float cstime = stof(cpu_use_vec[3]);
     float starttime = stof(cpu_use_vec[4]);
 
+    float uptime = LinuxParser::UpTime();
+
     float total_time = utime + stime + cutime + cstime;
-    float seconds = uptime_ - (starttime / sysconf(_SC_CLK_TCK));
+    float seconds = uptime - (starttime / sysconf(_SC_CLK_TCK));
     cpu_use_ = ((total_time / sysconf(_SC_CLK_TCK)) / seconds);
+
+    cpu_use_ = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
     return cpu_use_; 
 }
 
-// TODO: Return the command that generated this process
-string Process::Command() { return string(); }
+// DONE-CK: Return the command that generated this process
+string Process::Command() { 
+    return LinuxParser::Command(pid_);
+}
 
 // DONE-CK: Return this process's memory utilization
 string Process::Ram() { 
@@ -59,5 +66,5 @@ float Process::getCpuUse() const {
 // TODO: Overload the "less than" comparison operator for Process objects
 // REMOVE: [[maybe_unused]] once you define the function
 bool Process::operator<(Process const& a) const { 
-    return a.getCpuUse() < cpu_use_;
+    return cpu_use_ < a.getCpuUse();
 }

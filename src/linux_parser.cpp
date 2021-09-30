@@ -175,7 +175,7 @@ int LinuxParser::RunningProcesses() {
   return 0;
  }
 
-// DONE-CK: Read and return the command associated with a process
+// DONE-CK: Read and return the associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Command(int pid) { 
   string line;
@@ -189,8 +189,21 @@ string LinuxParser::Command(int pid) {
 }
 
 // TODO: Read and return the memory used by a process
-// REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Ram(int pid_) { 
+string LinuxParser::Ram(int pid) { 
+  string line, dummy, ram;
+  std::ifstream stream(kProcDirectory + to_string(pid) + kStatusFilename);
+
+  if ( stream.is_open() ) {
+    for (int i = 0; i < 18; i++) {
+      std::getline(stream, line);
+      if (i == 17) {
+        std::istringstream linestream(line);
+        linestream >> dummy >> ram;
+        float 
+        return std::stoi(active);
+      }
+    }
+  }
   
   return string(); 
 }
@@ -243,10 +256,10 @@ long LinuxParser::UpTime(int pid) {
     if ( stream.is_open() ) {
       std::getline(stream, line);
         std::istringstream linestream(line);
-        for (int i = 1; i < 22; i++) {
+        for (int i = 0; i < 22; i++) {
             linestream >> val;
           if (i == 21) {
-            return stol(val) / sysconf(_SC_CLK_TCK); // this is long int division
+             return stol(val) / sysconf(_SC_CLK_TCK); // this is long int division
           }
         }
   }
