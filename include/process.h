@@ -22,7 +22,8 @@ class Process {
  private:
  int pid_;
  long int uptime_{1};
- float cpu_use_{0.0};
+ float cpu_use_;
+ //float test_val_;
 };
 
 #endif

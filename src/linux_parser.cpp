@@ -199,8 +199,9 @@ string LinuxParser::Ram(int pid) {
       if (i == 17) {
         std::istringstream linestream(line);
         linestream >> dummy >> ram;
-        float 
-        return std::stoi(active);
+        int ram_kb = stof(ram);
+        int ram_mb = ram_kb / 1000;
+        return to_string(ram_mb);
       }
     }
   }

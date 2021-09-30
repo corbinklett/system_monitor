@@ -34,7 +34,8 @@ float Process::CpuUtilization() {
     float seconds = uptime - (starttime / sysconf(_SC_CLK_TCK));
     cpu_use_ = ((total_time / sysconf(_SC_CLK_TCK)) / seconds);
 
-    cpu_use_ = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    // for testing:
+    //cpu_use_ =  static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
     return cpu_use_; 
 }
 

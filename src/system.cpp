@@ -26,11 +26,13 @@ vector<Process>& System::Processes() {
     // but can the same process ID be re-used later on? yes it can.
     for (int pid : processes) {
         Process process(pid);
+        process.CpuUtilization();
         processes_.push_back(process);
     }
 
     // sort this according to cpu use
-    sort(processes_.begin(), processes_.end(), std::less<Process>());
+    sort(processes_.begin(), processes_.end(),[](Process b , Process a) { return a < b;} );
+    //sort(processes_.begin(), processes_.end(), std::less<Process>());
     
     return processes_; 
 }
