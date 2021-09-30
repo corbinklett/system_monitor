@@ -28,6 +28,10 @@ vector<Process>& System::Processes() {
         Process process(pid);
         processes_.push_back(process);
     }
+
+    // sort this according to cpu use
+    sort(processes_.begin(), processes_.end(), std::less<Process>());
+    
     return processes_; 
 }
 

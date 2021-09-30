@@ -216,18 +216,21 @@ string LinuxParser::Uid(int pid) {
 // DONE-CK: Read and return the user associated with a process
 string LinuxParser::User(int pid) { 
   string uid = LinuxParser::Uid(pid);
-  //return uid;
   string line, dummy, user, uid_guess;
   std::ifstream stream(kPasswordPath);
 
     while ( stream.good() ) {
-      std::getline(stream, line, ':');
+      std::getline(stream, line);
       std::istringstream linestream(line);
-      linestream >> user >> dummy >> uid_guess;
+      std::getline(linestream, user, ':');
+      std::getline(linestream, dummy, ':');
+      std::getline(linestream, uid_guess, ':');
+      //linestream >> user >> dummy >> uid_guess;
       if (uid_guess == uid) {
         return user;
       }
   }
+
   return string(); 
 }
 
@@ -257,6 +260,8 @@ vector<string> LinuxParser::CpuUtilization(int pid) {
   int indices[n] = {13,14,15,16,21};
   string line, dummy;
   vector<string> cpu_use_vec(5);
+  //cpu_use_vec = {"999","999","999","999","999"};
+  
   std::ifstream stream(kProcDirectory + to_string(pid) + kStatFilename);
 
   if (stream.is_open()) {
@@ -267,12 +272,17 @@ vector<string> LinuxParser::CpuUtilization(int pid) {
 
     for (int i = 0; i <= indices[n-1]; i++) {
       if (i == indices[count]) {
-        linestream >> cpu_use_vec[i];
+        linestream >> cpu_use_vec[count];
         count++;
+        if (count == n) {
+          return cpu_use_vec;
+        }
       } else {
         linestream >> dummy;
       }
     }
-  }
+  } 
+
   return cpu_use_vec; 
+  
 }

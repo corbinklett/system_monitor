@@ -18,6 +18,7 @@ int Process::Pid() { return pid_; }
 // DONE-CK: Return this process's CPU utilization
 float Process::CpuUtilization() { 
     vector<string> cpu_use_vec = LinuxParser::CpuUtilization(pid_);
+    //return stof(cpu_use_vec[4]);
 
     // algorithm from https://stackoverflow.com/questions/16726779/how-do-i-get-the-total-cpu-usage-of-an-application-from-proc-pid-stat/16736599#16736599
     float utime = stof(cpu_use_vec[0]);
@@ -29,7 +30,7 @@ float Process::CpuUtilization() {
     float total_time = utime + stime + cutime + cstime;
     float seconds = uptime_ - (starttime / sysconf(_SC_CLK_TCK));
     cpu_use_ = ((total_time / sysconf(_SC_CLK_TCK)) / seconds);
-    return cpu_use_;
+    return cpu_use_; 
 }
 
 // TODO: Return the command that generated this process
@@ -58,5 +59,5 @@ float Process::getCpuUse() const {
 // TODO: Overload the "less than" comparison operator for Process objects
 // REMOVE: [[maybe_unused]] once you define the function
 bool Process::operator<(Process const& a) const { 
-    return cpu_use_ < a.getCpuUse();
+    return a.getCpuUse() < cpu_use_;
 }
