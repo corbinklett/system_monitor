@@ -56,7 +56,7 @@ string Process::User() {
 
 // DONE-CK: Return the age of this process (in seconds)
 long int Process::UpTime() { 
-    uptime_ = LinuxParser::UpTime(pid_);
+    uptime_ = LinuxParser::UpTime() - LinuxParser::UpTime(pid_);
     return uptime_;
 }
 
