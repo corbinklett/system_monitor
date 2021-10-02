@@ -14,6 +14,30 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+// This function is copied from the Reviewer's suggestions:
+// Intentionally not including it in the LinuxParser namespace, for some reason
+template <typename T>
+T findValueByKey(std::string const &keyFilter, std::string const &filename) {
+  std::string line, key;
+  T value;
+
+  std::ifstream stream(LinuxParser::kProcDirectory + filename);
+  if (stream.is_open()) {
+    while (std::getline(stream, line)) {
+      std::istringstream linestream(line);
+      //while (linestream >> key >> value) {
+      linestream >> key >> value;
+      if (key == keyFilter) {
+        stream.close();
+        return value;
+      }
+      //}
+    }
+  }
+  stream.close();
+  return value;
+};
+
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
   string line;
@@ -105,19 +129,6 @@ long LinuxParser::UpTime() {
   }
 }
 
-// TODO: Read and return the number of jiffies for the system
-long LinuxParser::Jiffies() { return 0; }
-
-// TODO: Read and return the number of active jiffies for a PID
-// REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
-
-// TODO: Read and return the number of active jiffies for the system
-long LinuxParser::ActiveJiffies() { return 0; }
-
-// TODO: Read and return the number of idle jiffies for the system
-long LinuxParser::IdleJiffies() { return 0; }
-
 // DONE-CK: Read and return CPU utilization
 vector<string> LinuxParser::CpuUtilization() { 
   string dummy;
@@ -140,39 +151,14 @@ vector<string> LinuxParser::CpuUtilization() {
 // TODO: Read and return the total number of processes
 int LinuxParser::TotalProcesses() { 
   // line 9 of the proc/stat file
-  string line, dummy, active;
-  std::ifstream stream(kProcDirectory + kStatFilename);
-
-  if ( stream.is_open() ) {
-    for (int i = 0; i < 9; i++) {
-      std::getline(stream, line);
-      if (i == 8) {
-        std::istringstream linestream(line);
-        linestream >> dummy >> active;
-        return std::stoi(active);
-      }
-    }
-  }
-  return 0;
+  string numproc = findValueByKey<string>("processes", kStatFilename);
+  return stoi(numproc);
 }
 
-// TODO: Read and return the number of running processes
+// DONE-CK: Read and return the number of running processes
 int LinuxParser::RunningProcesses() { 
-    // line 10 of the proc/stat file
-  string line, dummy, active;
-  std::ifstream stream(kProcDirectory + kStatFilename);
-
-  if ( stream.is_open() ) {
-    for (int i = 0; i < 10; i++) {
-      std::getline(stream, line);
-      if (i == 9) {
-        std::istringstream linestream(line);
-        linestream >> dummy >> active;
-        return std::stoi(active);
-      }
-    }
-  }
-  return 0;
+  string numproc = findValueByKey<string>("procs_running", kStatFilename);
+  return stoi(numproc);
  }
 
 // DONE-CK: Read and return the associated with a process
